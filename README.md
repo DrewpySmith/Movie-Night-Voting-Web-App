@@ -35,7 +35,7 @@ A real-time movie night voting platform built with **Laravel 12**, **Livewire 4*
 ## Setup
 
 ```bash
-cd R:\Projects\Integrative\movie-night-voting
+cd C:/[Your Directory of choice]
 composer install
 npm install && npm run build
 php artisan migrate
