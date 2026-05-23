@@ -1,58 +1,98 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg">
+    <img alt="Movie Night Voting App" src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400">
+  </picture>
 </p>
 
-## About Laravel
+# Movie Night Voting App
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+A real-time movie night voting platform built with **Laravel 12**, **Livewire 4**, **Alpine.js**, and **Tailwind CSS**. Create rooms, suggest movies, vote, and settle on what to watch — all in real time.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Room-based voting** — Create private or public rooms, invite friends, suggest movies
+- **Real-time updates** — Votes, suggestions, and chat update instantly via Laravel Reverb WebSockets
+- **Movie discovery** — Search TMDB API for movies to suggest, trending movies section
+- **In-app notifications** — Bell icon with unread count, real-time Echo listener
+- **Email notifications** — Invitations, winner announcements, vote/suggestion alerts via Gmail SMTP
+- **Admin panel** — Dashboard with Chart.js stats, user/room management, soft-delete restore
+- **API** — Full REST API with Sanctum token auth for rooms, movies, votes, comments, invitations
 
-## Learning Laravel
+## Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+| Layer | Technology |
+|-------|-----------|
+| Backend | PHP 8.2, Laravel 12 |
+| Frontend | Blade, Livewire 4, Alpine.js (bundled with Livewire), Tailwind CSS |
+| Database | MySQL via XAMPP |
+| Real-time | Laravel Reverb (self-hosted WebSocket on localhost:8080) |
+| Auth | Laravel Breeze (email verification, password reset), Sanctum (API tokens) |
+| APIs | TMDB API (movie search/details/trending), OMDb API (movie metadata) |
+| Mail | Gmail SMTP |
+| Queue | Sync (dev) / Database (prod) |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Setup
 
-## Laravel Sponsors
+```bash
+cd R:\Projects\Integrative\movie-night-voting
+composer install
+npm install && npm run build
+php artisan migrate
+php artisan db:seed
+php artisan storage:link
+php artisan reverb:start          # real-time WebSocket
+php artisan schedule:work          # auto-close scheduled rooms
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Environment
 
-### Premium Partners
+Copy `.env.example` to `.env` and configure:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- **Database** — MySQL credentials (`127.0.0.1:3306`, root/no password for XAMPP)
+- **Reverb** — `BROADCAST_CONNECTION=reverb` with app ID, key, secret
+- **Mail** — Gmail SMTP credentials
+- **APIs** — `OMDB_API_KEY` and `TMDB_API_KEY`
 
-## Contributing
+## Testing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php artisan test    # 132 tests, 281 assertions
+```
 
-## Code of Conduct
+Tests cover unit services (VotingService, TmdbService), feature controllers (API, Auth, Admin, Livewire components), broadcasts, notifications, and scheduled commands.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Architecture
 
-## Security Vulnerabilities
+### Models
+- `User` — HasApiTokens, MustVerifyEmail, `is_admin` flag
+- `MovieRoom` — host, members (pivot), movies (pivot), soft deletes, scheduled expiry
+- `Movie` — sourced from OMDb or TMDB (`omdb_id` + `tmdb_id`), shared across rooms
+- `MovieVote` — unique per room/movie/user with up/down vote type
+- `Comment` — polymorphic to room or movie, soft deletes
+- `Invitation` — email/code invite flow with expiration
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Services
+- `OmdbService` — cached (1hr TTL), rate-limited, retry (3x), stale-cache fallback
+- `TmdbService` — search/findMovie/trending via TMDB, 6hr cache, local fallback
+- `RoomService` — create/join/leave/close/regenerate-code/transferHost
+- `VotingService` — cast/remove vote, calculate winner, declare winner
+- `InvitationService` — create/accept/decline/pending invitations
+
+### Real-time
+- Events: `VoteCast`, `MovieSuggested`, `RoomUpdated` — broadcast on public `room.{id}` channel
+- Notifications: `RoomNotification` via `database` + `broadcast` + `mail` channels
+- Client: `laravel-echo` + `pusher-js` configured in `resources/js/bootstrap.js`
+
+## Livewire 4 Notes
+
+- **Alpine is bundled with Livewire** — never import Alpine from npm. Register custom stores via `alpine:init` event in an inline `<script>` before `@livewireScripts`.
+- **`wire:model` requires `.live`** — without `.live`, only local Alpine state updates; server round-trips (and `updatedX()` hooks) need the modifier.
+- **Use `@livewireScripts`** (not `@livewireScriptConfig`) when assets are published to `public/vendor/livewire/`.
+
+## Commands
+
+- `rooms:check-winners` — scheduled every minute, closes rooms past `scheduled_at`, calculates winner
 
 ## License
 
