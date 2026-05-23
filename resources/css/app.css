@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] { display: none !important; }
+
+:root { color-scheme: dark; }
+
+body {
+    background: radial-gradient(circle at top left, rgba(239, 68, 68, 0.14), transparent 30rem), #09090b;
+}
+
+.hero-strip {
+    position: absolute;
+    top: -12rem;
+    bottom: -12rem;
+    width: min(26vw, 21rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    opacity: 0.42;
+    filter: saturate(0.9);
+}
+
+.hero-strip img {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 1.25rem;
+}
+
+.hero-strip-left {
+    left: max(1rem, 4vw);
+    animation: poster-drift 38s linear infinite;
+}
+
+.hero-strip-right {
+    right: max(1rem, 4vw);
+    animation: poster-drift-reverse 42s linear infinite;
+}
+
+.animation-delay-100 { animation-delay: 100ms; }
+.animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-300 { animation-delay: 300ms; }
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+    }
+}
+
+input:focus { outline: none; }
+
+.transition-within:focus-within {
+    border-color: rgba(239, 68, 68, 0.7);
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
