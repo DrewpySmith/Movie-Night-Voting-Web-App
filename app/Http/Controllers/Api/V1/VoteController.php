@@ -21,6 +21,8 @@ class VoteController extends Controller
 
     public function store(StoreVoteRequest $request, MovieRoom $room, Movie $movie): VoteResource
     {
+        abort_unless($room->isMember($request->user()), 403);
+
         $vote = $this->votingService->castVote(
             $room,
             $movie,
@@ -33,6 +35,8 @@ class VoteController extends Controller
 
     public function destroy(MovieRoom $room, Movie $movie): JsonResponse
     {
+        abort_unless($room->isMember(request()->user()), 403);
+
         $this->votingService->removeVote($room, $movie, request()->user());
 
         return response()->json(['message' => 'Vote removed']);

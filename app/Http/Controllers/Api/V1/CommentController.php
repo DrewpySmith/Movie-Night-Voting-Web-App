@@ -7,12 +7,15 @@ use App\Http\Requests\StoreCommentRequest;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use App\Models\MovieRoom;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class CommentController extends Controller
 {
-    public function index(MovieRoom $room): AnonymousResourceCollection
+    public function index(Request $request, MovieRoom $room): AnonymousResourceCollection
     {
+        abort_unless($room->isMember($request->user()), 403);
+
         $comments = Comment::where('room_id', $room->id)
             ->with('user')
             ->latest()
@@ -23,6 +26,8 @@ class CommentController extends Controller
 
     public function store(StoreCommentRequest $request, MovieRoom $room): CommentResource
     {
+        abort_unless($room->isMember($request->user()), 403);
+
         $comment = Comment::create([
             'room_id' => $room->id,
             'movie_id' => $request->input('movie_id'),

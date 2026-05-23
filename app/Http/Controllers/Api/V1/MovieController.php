@@ -51,6 +51,10 @@ class MovieController extends Controller
 
     public function suggest(SuggestMovieRequest $request, MovieRoom $room): JsonResponse
     {
+        if (!$room->isMember($request->user())) {
+            abort(403);
+        }
+
         $movie = Movie::where('omdb_id', $request->omdb_id)->firstOrFail();
 
         if ($this->movieRepository->isInRoom($room, $movie)) {

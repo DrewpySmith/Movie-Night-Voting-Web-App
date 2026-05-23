@@ -35,7 +35,7 @@ class BroadcastTest extends TestCase
         VoteCast::dispatch($room, $movie, $vote);
 
         Event::assertDispatched(VoteCast::class, function ($event) use ($room) {
-            return $event->broadcastOn()->name === 'room.' . $room->id;
+            return $event->broadcastOn()->name === 'private-room.' . $room->id;
         });
     }
 
@@ -50,7 +50,7 @@ class BroadcastTest extends TestCase
         MovieSuggested::dispatch($room, $movie, $user);
 
         Event::assertDispatched(MovieSuggested::class, function ($event) use ($room) {
-            return $event->broadcastOn()->name === 'room.' . $room->id;
+            return $event->broadcastOn()->name === 'private-room.' . $room->id;
         });
     }
 
@@ -63,7 +63,7 @@ class BroadcastTest extends TestCase
         RoomUpdated::dispatch($room, 'closed');
 
         Event::assertDispatched(RoomUpdated::class, function ($event) use ($room) {
-            return $event->broadcastOn()->name === 'room.' . $room->id;
+            return $event->broadcastOn()->name === 'private-room.' . $room->id;
         });
     }
 }

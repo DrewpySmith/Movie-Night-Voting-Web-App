@@ -36,8 +36,12 @@ class RoomController extends Controller
         return RoomResource::make($room->load(['host', 'members']));
     }
 
-    public function show(MovieRoom $room): RoomResource
+    public function show(Request $request, MovieRoom $room): RoomResource
     {
+        if ($room->visibility === 'private' && !$room->isMember($request->user())) {
+            abort(403);
+        }
+
         $room->load(['host', 'members', 'movies', 'winner', 'votes']);
         $room->loadCount('members', 'movies');
 

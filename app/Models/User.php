@@ -21,6 +21,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'avatar',
+    ];
+
+    protected $guarded = [
         'is_admin',
     ];
 

@@ -4,6 +4,7 @@ namespace App\Events;
 
 use App\Models\MovieRoom;
 use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -20,7 +21,7 @@ class RoomUpdated implements ShouldBroadcast
 
     public function broadcastOn(): Channel
     {
-        return new Channel('room.' . $this->room->id);
+        return new PrivateChannel('room.' . $this->room->id);
     }
 
     public function broadcastWith(): array
