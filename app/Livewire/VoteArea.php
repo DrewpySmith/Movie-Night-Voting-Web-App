@@ -83,8 +83,12 @@ class VoteArea extends Component
 
     public function render()
     {
+        $roomMovies = $this->movie
+            ? collect([$this->movie->load('votes')])
+            : $this->room->movies()->with('votes')->get();
+
         return view('livewire.vote-area', [
-            'roomMovies' => $this->room->movies()->with('votes')->get(),
+            'roomMovies' => $roomMovies,
         ]);
     }
 }

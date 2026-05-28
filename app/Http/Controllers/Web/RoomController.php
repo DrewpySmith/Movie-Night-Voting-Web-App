@@ -40,16 +40,34 @@ class RoomController extends Controller
 
     public function show(MovieRoom $room): View
     {
-        $room->load(['host', 'members', 'movies' => function ($q) {
-            $q->with(['votes', 'reactions']);
-        }, 'winner']);
+        $room->load([
+            'host',
+            'members',
+            'movies' => function ($q) {
+                $q->withCount([
+                    'votes as upvotes_count' => fn($q) => $q->where('vote', 'up'),
+                    'votes as downvotes_count' => fn($q) => $q->where('vote', 'down'),
+                ])->with(['votes', 'reactions']);
+            },
+            'winner',
+        ]);
 
         return view('pages.rooms.show', compact('room'));
     }
 
     public function results(MovieRoom $room): View
     {
-        $room->load(['host', 'members', 'movies', 'winner']);
+        $room->load([
+            'host',
+            'members',
+            'movies' => function ($q) {
+                $q->withCount([
+                    'votes as upvotes_count' => fn($q) => $q->where('vote', 'up'),
+                    'votes as downvotes_count' => fn($q) => $q->where('vote', 'down'),
+                ]);
+            },
+            'winner',
+        ]);
 
         return view('pages.rooms.results', compact('room'));
     }

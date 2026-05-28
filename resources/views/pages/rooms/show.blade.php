@@ -22,7 +22,7 @@
                     </p>
                 </div>
                 @if($room->movies->isNotEmpty())
-                    @php $leader = $room->movies->sortByDesc(fn($m) => $m->upvotesCount() - $m->downvotesCount())->first(); @endphp
+                    @php $leader = $room->movies->sortByDesc(fn($m) => ($m->upvotes_count ?? 0) - ($m->downvotes_count ?? 0))->first(); @endphp
                     @if($leader)
                         <div class="rounded-3xl border border-red-400/30 bg-red-500/10 px-5 py-4">
                             <p class="text-sm text-red-200">Current leader</p>
