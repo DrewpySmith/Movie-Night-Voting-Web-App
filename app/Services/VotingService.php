@@ -62,7 +62,7 @@ class VotingService
             ->select('movie_id', DB::raw("SUM(CASE WHEN vote = 'up' THEN 1 WHEN vote = 'down' THEN -1 ELSE 0 END) as score"))
             ->groupBy('movie_id')
             ->orderByDesc('score')
-            ->orderBy('created_at')
+            ->orderByRaw('MIN(created_at)')
             ->get();
 
         if ($scores->isEmpty() || $scores->first()->score <= 0) {
@@ -99,7 +99,7 @@ class VotingService
                 DB::raw("SUM(CASE WHEN vote = 'up' THEN 1 WHEN vote = 'down' THEN -1 ELSE 0 END) as score"))
             ->groupBy('movie_id')
             ->orderByDesc('score')
-            ->orderBy('created_at')
+            ->orderByRaw('MIN(created_at)')
             ->get()
             ->keyBy('movie_id')
             ->toArray();
