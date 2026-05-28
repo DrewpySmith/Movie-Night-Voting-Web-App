@@ -2,7 +2,7 @@
 
 ## Stack
 - **Laravel 12** (PHP 8.2.12)
-- **MySQL** via XAMPP (127.0.0.1:3306, root/no password)
+- **PostgreSQL** via Supabase (hosted, `db.jazlniemhbwynynongsh.supabase.co`)
 - **TailwindCSS** dark theme (`#09090b` bg, `#ef4444` accent, `#171719` cards)
 - **Blade** + **Alpine.js** (bundled with Livewire, never import separately from npm) + **Livewire 4** frontend
 - **Laravel Reverb** self-hosted WebSocket (localhost:8080)
@@ -123,7 +123,7 @@ Tests cover: unit (VotingService), feature (API controllers, Livewire components
 - **Considerations**: OMDb has no dedicated trending endpoint; use TMDB's `/trending/movie/week` as alternative or supplement with a second API key
 
 ### Additional Roadmap
-- **Docker setup** — containerize app + MySQL + Reverb for consistent dev/deploy
+- **Docker setup** — containerize app + Reverb for consistent dev/deploy
 - **Email templates** — HTML email views already published, can customize further
 - **API pagination** — add cursor pagination to large collections
 - **Search/filter admin** — search users, rooms, comments in admin panel

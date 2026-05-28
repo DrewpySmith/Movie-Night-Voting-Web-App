@@ -59,7 +59,7 @@ class VotingService
     public function calculateWinner(MovieRoom $room): ?Movie
     {
         $scores = MovieVote::where('room_id', $room->id)
-            ->select('movie_id', DB::raw('SUM(CASE WHEN vote = "up" THEN 1 WHEN vote = "down" THEN -1 ELSE 0 END) as score'))
+            ->select('movie_id', DB::raw("SUM(CASE WHEN vote = 'up' THEN 1 WHEN vote = 'down' THEN -1 ELSE 0 END) as score"))
             ->groupBy('movie_id')
             ->orderByDesc('score')
             ->orderBy('created_at')
@@ -94,9 +94,9 @@ class VotingService
     public function getVoteTally(MovieRoom $room): array
     {
         return MovieVote::where('room_id', $room->id)
-            ->select('movie_id', DB::raw('SUM(CASE WHEN vote = "up" THEN 1 ELSE 0 END) as upvotes'),
-                DB::raw('SUM(CASE WHEN vote = "down" THEN 1 ELSE 0 END) as downvotes'),
-                DB::raw('SUM(CASE WHEN vote = "up" THEN 1 WHEN vote = "down" THEN -1 ELSE 0 END) as score'))
+            ->select('movie_id', DB::raw("SUM(CASE WHEN vote = 'up' THEN 1 ELSE 0 END) as upvotes"),
+                DB::raw("SUM(CASE WHEN vote = 'down' THEN 1 ELSE 0 END) as downvotes"),
+                DB::raw("SUM(CASE WHEN vote = 'up' THEN 1 WHEN vote = 'down' THEN -1 ELSE 0 END) as score"))
             ->groupBy('movie_id')
             ->orderByDesc('score')
             ->orderBy('created_at')
